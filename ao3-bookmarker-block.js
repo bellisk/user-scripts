@@ -25,11 +25,17 @@ for (let i=0;i<bookmarks.length;i++) {
     headerModule.parentNode.insertBefore(blockLink, headerModule.nextSibling);
 }
 blockStyle = document.createElement('style');
-blockStyle.innerHTML = 'div.bookmarkblock {text-align: right; font-family:monospace; position:relative; right:5px;}';
+blockStyle.innerHTML = 'div.bookmarkblock {text-align: right; font-family:monospace; margin-bottom: .375em;}';
 document.head.appendChild(blockStyle);
 
 let unblock = document.createElement('li');
-unblock.innerHTML = '<a>Hide Bookmark</a><ul class="menu"><li id="clearLast"><a>Unhide last</a></li><li id="clearAll"><a>Unhide all</a></li><li id="blockUsername"><a>Block username</a></li></ul>';
+unblock.innerHTML = `
+    <a>Hide Bookmarks</a>
+    <ul class="menu">
+        <li id="clearLast"><a>Unblock last</a></li>
+        <li id="clearAll"><a>Unblock all</a></li>
+        <li id="blockUsername"><a>Block username</a></li>
+    </ul>`;
 unblock.className = 'dropdown bookmarkblock';
 let search = document.getElementsByClassName('primary navigation actions')[0].getElementsByClassName('search')[0];
 search.parentNode.insertBefore(unblock, search);
@@ -76,9 +82,9 @@ async function clearAll(){
 }
 
 async function clearLast() {
-    const unblockId = await GM.getValue('last');
+    const username = await GM.getValue('last');
     await GM.deleteValue('last');
-    await GM.deleteValue(unblockId);
+    await GM.deleteValue(username);
     location.reload();
 }
 
