@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         ao3 bookmarks block
+// @name         ao3 hide bookmarks
 // @namespace    https://greasyfork.org/en/users/800073-bellisk
 // @version      0.1
 // @description  permanently hide bookmarks created by specified users
@@ -29,18 +29,18 @@ blockStyle.innerHTML = 'div.bookmarkblock {text-align: right; font-family:monosp
 document.head.appendChild(blockStyle);
 
 let unblock = document.createElement('li');
-unblock.innerHTML = '<a>Bookmark Block</a><ul class="menu"><li id="clearLast"><a>Unblock last</a></li><li id="clearAll"><a>Unblock all</a></li></ul>';
+unblock.innerHTML = '<a>Hide Bookmark</a><ul class="menu"><li id="clearLast"><a>Unhide last</a></li><li id="clearAll"><a>Unhide all</a></li><li id="blockUsername"><a>Block username</a></li></ul>';
 unblock.className = 'dropdown bookmarkblock';
 let search = document.getElementsByClassName('primary navigation actions')[0].getElementsByClassName('search')[0];
 search.parentNode.insertBefore(unblock, search);
+
+// block bookmarks
 
 function getBookmarkerName(liTag) {
     const byline = liTag.getElementsByClassName('byline')[0];
     const bookmarker = byline.getElementsByTagName('a')[0];
     return bookmarker.text;
 }
-
-// block bookmarks
 
 function blockThisBookmarker(bookmark) {
     const bookmarker = getBookmarkerName(bookmark);
@@ -56,6 +56,13 @@ async function blockSelected(bookmarks) {
             bookmarks[j].style.display = 'none';
         }
     }
+}
+
+function blockUsername() {
+    const username = prompt("Enter a username to hide all bookmarks from");
+    GM.setValue(username, username);
+    GM.setValue('last', username);
+    location.reload();
 }
 
 // unblock bookmarks
@@ -81,6 +88,7 @@ blockSelected(bookmarks);
 
 document.getElementById('clearLast').onclick = function() {clearLast();};
 document.getElementById('clearAll').onclick = function() {clearAll();};
+document.getElementById('blockUsername').onclick = function() {blockUsername();};
 
 const blockLinks = document.getElementsByClassName('blockThisBookmarker');
 for (let k=0; k<blockLinks.length; k++) {
