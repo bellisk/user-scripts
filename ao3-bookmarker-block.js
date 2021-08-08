@@ -4,8 +4,8 @@
 // @version      0.1
 // @description  permanently hide bookmarks created by specified users
 // @author       bellisk
-// @include      http://archiveofourown.org/works/*/bookmarks
-// @include      https://archiveofourown.org/works/*/bookmarks
+// @include      http://archiveofourown.org/works/*/bookmarks*
+// @include      https://archiveofourown.org/works/*/bookmarks*
 // @grant        GM.setValue
 // @grant        GM.getValue
 // @grant        GM.listValues
