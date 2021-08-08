@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ao3 hide bookmarks
 // @namespace    https://greasyfork.org/en/users/800073-bellisk
-// @version      0.1
+// @version      0.1.2
 // @description  permanently hide bookmarks created by specified users
 // @author       bellisk
 // @include      http://archiveofourown.org/works/*/bookmarks*
