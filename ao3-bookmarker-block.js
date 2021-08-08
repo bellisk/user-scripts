@@ -25,16 +25,16 @@ for (let i=0;i<bookmarks.length;i++) {
     headerModule.parentNode.insertBefore(blockLink, headerModule.nextSibling);
 }
 blockStyle = document.createElement('style');
-blockStyle.innerHTML = 'div.bookmarkblock {text-align: right; font-family:monospace; margin-bottom: .375em;}';
+blockStyle.innerHTML = 'div.bookmarkblock {text-align: right; font-family:monospace; margin-bottom: .375em; cursor: pointer;}';
 document.head.appendChild(blockStyle);
 
 let unblock = document.createElement('li');
 unblock.innerHTML = `
-    <a>Hide Bookmarks</a>
-    <ul class="menu">
-        <li id="clearLast"><a>Unblock last</a></li>
-        <li id="clearAll"><a>Unblock all</a></li>
-        <li id="blockUsername"><a>Block username</a></li>
+    <a class="dropdown-toggle" href="/menu/hide-bookmarks" data-toggle="dropdown" data-target="#">Hide Bookmarks</a>
+    <ul class="menu dropdown-menu" role="menu">
+        <li id="clearLast" role="menu-item"><a href="#">Unblock last</a></li>
+        <li id="clearAll" role="menu-item"><a href="#">Unblock all</a></li>
+        <li id="blockUsername" role="menu-item"><a href="#">Block username</a></li>
     </ul>`;
 unblock.className = 'dropdown bookmarkblock';
 let search = document.getElementsByClassName('primary navigation actions')[0].getElementsByClassName('search')[0];
