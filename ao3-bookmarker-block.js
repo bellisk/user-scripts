@@ -85,6 +85,8 @@ async function clearLast() {
     const username = await GM.getValue('last');
     await GM.deleteValue('last');
     await GM.deleteValue(username);
+    const blocked = await GM.listValues();
+    GM.setValue('last', blocked[blocked.length -1]);
     location.reload();
 }
 
