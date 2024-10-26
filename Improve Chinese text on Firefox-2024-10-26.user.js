@@ -7,18 +7,16 @@
 // @match        http://*/*
 // @match        https://*/*
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+// @require      https://cdn.jsdelivr.net/gh/CoeJoder/waitForKeyElements.js@v1.3/waitForKeyElements.js
 // @grant        none
+// @run-at       document-idle
 // ==/UserScript==
 
 (function() {
     'use strict';
 
-    var spans = document.getElementsByTagName("span");
-    for (var i = spans.length; --i >= 0;) {
-        var span = spans[i];
-        var lang = span.getAttribute("lang");
-        if (lang == "zh") {
-            span.lang = "zh-cn";
-        }
-    }
+    waitForKeyElements("*:lang(zh)", (element) => {
+        console.log(element);
+        element.lang = "zh-cn";
+    })
 })();
