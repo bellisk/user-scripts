@@ -126,8 +126,9 @@ async function addWarningBox() {
             GM_addStyle(warningBoxCss);
             const summary = document.getElementsByClassName('summary')[0];
             summary.parentNode.insertBefore(warning, summary);
+
+            break;
         }
-        break;
     }
 }
 
