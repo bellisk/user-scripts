@@ -1,20 +1,18 @@
 // ==UserScript==
 // @name         ao3 warn for fics with keywords
 // @namespace    http://tampermonkey.net/
-// @version      2025-02-01
+// @version      2025-02-02
 // @description  Adds a warning box on fics that contain certain keywords on AO3
 // @author       bellisk
+// @license      MIT
 // @include      https://archiveofourown.org/*
 // @icon         http://archiveofourown.org/favicon.ico
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_listValues
 // @grant        GM_deleteValue
-// @grant        GM_xmlhttpRequest
-// @grant        GM_log
 // @grant        GM_addStyle
 // ==/UserScript==
-
 
 // interface
 
@@ -60,16 +58,6 @@ async function clearLast() {
 }
 
 // filter and hide fics
-
-async function logKeywords() {
-    const keywordsToHide = await GM_listValues();
-    GM_log(keywordsToHide);
-    GM_log(GM_getValue('last'));
-    for (let j=0; j<keywordsToHide.length; j++) {
-        GM_log(keywordsToHide[j]);
-        GM_log(GM_getValue(keywordsToHide[j]));
-    }
-}
 
 const warningBoxCss = `
 .warningBox {
@@ -161,7 +149,7 @@ function toggleFicDisplay() {
 
 async function addWarningBoxForSingleFicPage() {
     const chapters = document.getElementById('chapters');
-    if (chapters == null) {
+    if (chapters === null) {
         return;
     }
     const keywordsToHide = await GM_listValues();
@@ -204,6 +192,5 @@ async function addWarningBoxForSingleFicPage() {
 document.getElementById('clearLast').onclick = function() {clearLast();};
 document.getElementById('clearAll').onclick = function() {clearAll();};
 document.getElementById('addKeyword').onclick = function() {addKeyword();};
-logKeywords();
 filterListOfFics();
 addWarningBoxForSingleFicPage();
