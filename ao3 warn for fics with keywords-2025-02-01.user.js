@@ -4,7 +4,7 @@
 // @version      2025-02-01
 // @description  Adds a warning box on fics that contain certain keywords on AO3
 // @author       bellisk
-// @include      https://archiveofourown.org/works/*
+// @include      https://archiveofourown.org/*
 // @icon         http://archiveofourown.org/favicon.ico
 // @grant        GM_setValue
 // @grant        GM_getValue
@@ -71,32 +71,71 @@ async function logKeywords() {
     }
 }
 
-async function filterListOfFics() {
-    const keywordsToHide = await GM_listValues();
-    const fics = document.querySelectorAll('li.work');
-    for (let j=0; j<fics.length; j++) {
-        const atag = fics[j].getElementsByClassName('heading')[0].getElementsByTagName('a')[0];
-        GM_xmlhttpRequest({
-            method: "GET",
-            url: atag.href,
-            responseType: "document",
-            onload: function (response) {
-                // Attempt to create responseXML, if absent, in supported browsers
-                var responseXML = response.responseXML;
-                if (!responseXML) {
-                    try {
-                        responseXML = new DOMParser().parseFromString(response.responseText, "text/html");
-                    }
-                    catch (err) {}
-                }
-                for (let k=0; k<keywordsToHide.length; k++) {
-                    if (keywordsToHide.find(function(keyword) {return response.responseText.toLowerCase().includes(keyword.toLowerCase());})) {
-                        fics[j].style.display = 'none';
-                        GM_log(`Not displaying fic #${atag.href} because it contains keyword: ${keywordsToHide[k]}`);
-                    }
-                };
+const warningBoxCss = `
+.warningBox {
+  box-shadow: 1px;
+  box-shadow: 1px 1px 5px #aaa;
+  border: 1px solid #ccc;
+  clear: right;
+  padding: 1.286em 0.75em;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}`
+
+function toggleFicBlurbDisplay(index) {
+    const blurbs = document.querySelectorAll('li.blurb');
+    const warningButton = document.getElementById(`warningButton${index}`);
+    if (blurbs[index].getElementsByClassName('header')[0].style.display === 'none') {
+        for (let k=0; k<blurbs[index].children.length; k++) {
+            blurbs[index].children[k].style.display = 'block';
+        }
+        warningButton.textContent = 'Hide the fic summary';
+    } else {
+        for (let k=0; k<blurbs[index].children.length; k++) {
+            if (blurbs[index].children[k].className !== 'warningBox') {
+                blurbs[index].children[k].style.display = 'none';
             }
-        });
+        }
+        warningButton.textContent = 'Display the fic summary';
+    }
+}
+
+async function filterListOfFics() {
+    const fics = document.querySelectorAll('li.blurb');
+    if (fics.length == 0) {
+        return;
+    }
+    const keywordsToHide = await GM_listValues();
+    for (let j=0; j<fics.length; j++) {
+        const foundKeywords = [];
+        for (let k=0; k<keywordsToHide.length; k++) {
+            if (keywordsToHide[k] === 'last') {
+                continue;
+            }
+            if (fics[j].innerText.toLowerCase().includes(GM_getValue(keywordsToHide[k]))) {
+                foundKeywords.push(GM_getValue(keywordsToHide[k]));
+            }
+        }
+        if (foundKeywords.length > 0) {
+            const warning = document.createElement('div');
+            warning.id = `warningBox${j}`;
+            warning.className = "warningBox";
+            warning.innerHTML = `
+                <h3>Blocked keyword(s) found in this fic summary</h3>
+                <details>
+                    <summary>Click to see the keywords found.</summary>
+                    <p>${foundKeywords}</p>
+                </details>
+                <button id="warningButton${j}">Display the fic summary</button>
+            `;
+            GM_addStyle(warningBoxCss);
+            for (let k=0; k<fics[j].children.length; k++) {
+                fics[j].children[k].style.display = 'none';
+            }
+            fics[j].prepend(warning);
+            document.getElementById(`warningButton${j}`).onclick = function() {toggleFicBlurbDisplay(j);};
+        }
     }
 }
 
@@ -120,21 +159,12 @@ function toggleFicDisplay() {
     }
 }
 
-const warningBoxCss = `
-.warningBox {
-  box-shadow: 1px;
-  box-shadow: 1px 1px 5px #aaa;
-  border: 1px solid #ccc;
-  clear: right;
-  padding: 1.286em 0.75em;
-  position: relative;
-  overflow: hidden;
-  text-align: center;
-}`
-
 async function addWarningBoxForSingleFicPage() {
-    const keywordsToHide = await GM_listValues();
     const chapters = document.getElementById('chapters');
+    if (chapters == null) {
+        return;
+    }
+    const keywordsToHide = await GM_listValues();
     const foundKeywords = [];
     for (let j=0; j<keywordsToHide.length; j++) {
         if (keywordsToHide[j] == 'last') {
@@ -144,14 +174,14 @@ async function addWarningBoxForSingleFicPage() {
             foundKeywords.push(GM_getValue(keywordsToHide[j]));
         }
     }
-    GM_log(foundKeywords);
     if (foundKeywords.length > 0) {
         const warning = document.createElement('div');
         warning.id = "warningBox";
+        warning.className = "warningBox";
         warning.innerHTML = `
             <h3>Blocked keyword(s) found in this fic</h3>
             <details>
-                <summary>Click to see the keywords found in this fic.</summary>
+                <summary>Click to see the keywords found.</summary>
                 <p>${foundKeywords}</p>
             </details>
             <button id="warningButton">Display the fic</button>
@@ -169,13 +199,11 @@ async function addWarningBoxForSingleFicPage() {
     }
 }
 
-async function handleFicListPage() {}
-
 // run
 
 document.getElementById('clearLast').onclick = function() {clearLast();};
 document.getElementById('clearAll').onclick = function() {clearAll();};
 document.getElementById('addKeyword').onclick = function() {addKeyword();};
 logKeywords();
-// filterListOfFics();
+filterListOfFics();
 addWarningBoxForSingleFicPage();
