@@ -1,5 +1,3 @@
-/*jshint esversion: 8 */
-
 // ==UserScript==
 // @name         ao3 warn for fics with keywords
 // @namespace    http://tampermonkey.net/
@@ -22,9 +20,9 @@ var dropdown = document.createElement('li');
 dropdown.innerHTML = `
     <a class="dropdown-toggle" href="/menu/hide-keywords" data-toggle="dropdown" data-target="#">Hide fics with keywords</a>
     <ul class="menu dropdown-menu" role="menu">
+        <li id="addKeyword" role="menu-item"><a href="#">Add keyword to hide fics for</a></li>
         <li id="clearLast" role="menu-item"><a href="#">Remove last-added keyword</a></li>
         <li id="clearAll" role="menu-item"><a href="#">Remove all keywords</a></li>
-        <li id="addKeyword" role="menu-item"><a href="#">Add keyword to hide fics for</a></li>
     </ul>
 `;
 dropdown.className = 'dropdown hideKeywordFics';
@@ -191,8 +189,8 @@ async function addWarningBoxForSingleFicPage() {
 
 // run
 
+document.getElementById('addKeyword').onclick = function() {addKeyword();};
 document.getElementById('clearLast').onclick = function() {clearLast();};
 document.getElementById('clearAll').onclick = function() {clearAll();};
-document.getElementById('addKeyword').onclick = function() {addKeyword();};
 filterListOfFics();
 addWarningBoxForSingleFicPage();
