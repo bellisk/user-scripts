@@ -100,6 +100,26 @@ async function filterListOfFics() {
     }
 }
 
+function toggleFicDisplay() {
+    const chapters = document.getElementById('chapters');
+    const warningButton = document.getElementById('warningButton');
+    if (chapters.style.display === 'none') {
+        chapters.style.display = 'block';
+        const notes = document.getElementsByClassName('notes');
+        for (let k=0; k<notes.length; k++) {
+            notes[k].style.display = 'block';
+        }
+        warningButton.textContent = 'Hide the fic';
+    } else {
+        chapters.style.display = 'none';
+        const notes = document.getElementsByClassName('notes');
+        for (let k=0; k<notes.length; k++) {
+            notes[k].style.display = 'none';
+        }
+        warningButton.textContent = 'Display the fic';
+    }
+}
+
 const warningBoxCss = `
 .warningBox {
   box-shadow: 1px;
@@ -112,25 +132,44 @@ const warningBoxCss = `
   text-align: center;
 }`
 
-async function addWarningBox() {
+async function addWarningBoxForSingleFicPage() {
     const keywordsToHide = await GM_listValues();
     const chapters = document.getElementById('chapters');
+    const foundKeywords = [];
     for (let j=0; j<keywordsToHide.length; j++) {
+        if (keywordsToHide[j] == 'last') {
+            continue;
+        }
         if (chapters.innerText.toLowerCase().includes(GM_getValue(keywordsToHide[j]))) {
-            const warning = document.createElement('div');
-            warning.className = "warningBox";
-            warning.innerHTML = `
-                <h3>WARNING</h3>
-                <p>${GM_getValue(keywordsToHide[j])}</p>
-            `;
-            GM_addStyle(warningBoxCss);
-            const summary = document.getElementsByClassName('summary')[0];
-            summary.parentNode.insertBefore(warning, summary);
-
-            break;
+            foundKeywords.push(GM_getValue(keywordsToHide[j]));
         }
     }
+    GM_log(foundKeywords);
+    if (foundKeywords.length > 0) {
+        const warning = document.createElement('div');
+        warning.id = "warningBox";
+        warning.innerHTML = `
+            <h3>Blocked keyword(s) found in this fic</h3>
+            <details>
+                <summary>Click to see the keywords found in this fic.</summary>
+                <p>${foundKeywords}</p>
+            </details>
+            <button id="warningButton">Display the fic</button>
+        `;
+        GM_addStyle(warningBoxCss);
+        const summary = document.getElementsByClassName('summary')[0];
+        summary.parentNode.insertBefore(warning, summary);
+
+        chapters.style.display = 'none';
+        const notes = document.getElementsByClassName('notes');
+        for (let k=0; k<notes.length; k++) {
+            notes[k].style.display = 'none';
+        }
+        document.getElementById('warningButton').onclick = function() {toggleFicDisplay();};
+    }
 }
+
+async function handleFicListPage() {}
 
 // run
 
@@ -139,4 +178,4 @@ document.getElementById('clearAll').onclick = function() {clearAll();};
 document.getElementById('addKeyword').onclick = function() {addKeyword();};
 logKeywords();
 // filterListOfFics();
-addWarningBox();
+addWarningBoxForSingleFicPage();
