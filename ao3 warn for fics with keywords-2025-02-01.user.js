@@ -1,3 +1,5 @@
+/*jshint esversion: 8 */
+
 // ==UserScript==
 // @name         ao3 warn for works with keywords
 // @namespace    http://tampermonkey.net/
