@@ -20,7 +20,7 @@
 
 // interface
 
-var dropdown = document.createElement('li');
+const dropdown = document.createElement('li');
 dropdown.innerHTML = `
     <a class="dropdown-toggle" href="/menu/hide-keywords" data-toggle="dropdown" data-target="#">Hide works with keywords</a>
     <ul class="menu dropdown-menu" role="menu">
@@ -30,7 +30,7 @@ dropdown.innerHTML = `
     </ul>
 `;
 dropdown.className = 'dropdown hideKeywordWorks';
-var primaryNav = document.getElementsByClassName('primary navigation actions')[0];
+const primaryNav = document.getElementsByClassName('primary navigation actions')[0];
 primaryNav.appendChild(dropdown);
 
 // manage keywords to hide
@@ -43,20 +43,20 @@ function addKeyword() {
 }
 
 async function clearAll(){
-    const keys = await GM.listValues();
+    const keys = await GM_listValues();
     for (let k=0;k<keys.length; k++) {
-        await GM.deleteValue(keys[k]);
+        await GM_deleteValue(keys[k]);
     }
     location.reload();
 }
 
 async function clearLast() {
-    const keyword = await GM.getValue('last');
-    await GM.deleteValue('last');
-    await GM.deleteValue(keyword);
-    const keywordsToHide = await GM.listValues();
+    const keyword = await GM_getValue('last');
+    await GM_deleteValue('last');
+    await GM_deleteValue(keyword);
+    const keywordsToHide = await GM_listValues();
     if (keywordsToHide.length > 0) {
-        GM.setValue('last', keywordsToHide[keywordsToHide.length -1]);
+        GM_setValue('last', keywordsToHide[keywordsToHide.length -1]);
     }
     location.reload();
 }
@@ -95,7 +95,7 @@ function toggleWorkBlurbDisplay(index) {
 
 async function filterListOfWorks() {
     const works = document.querySelectorAll('li.blurb');
-    if (works.length == 0) {
+    if (works.length === 0) {
         return;
     }
     const keywordsToHide = await GM_listValues();
@@ -163,7 +163,7 @@ async function addWarningBoxForSingleWorkPage() {
     const keywordsToHide = await GM_listValues();
     const foundKeywords = [];
     for (let j=0; j<keywordsToHide.length; j++) {
-        if (keywordsToHide[j] == 'last') {
+        if (keywordsToHide[j] === 'last') {
             continue;
         }
         if (chapters.innerText.toLowerCase().includes(GM_getValue(keywordsToHide[j])) ||
