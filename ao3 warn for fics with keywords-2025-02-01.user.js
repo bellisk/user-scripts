@@ -1,5 +1,3 @@
-/*jshint esversion: 8 */
-
 // ==UserScript==
 // @name         ao3 warn for works with keywords
 // @namespace    http://tampermonkey.net/
@@ -14,7 +12,11 @@
 // @grant        GM_listValues
 // @grant        GM_deleteValue
 // @grant        GM_addStyle
+// @downloadURL https://update.greasyfork.org/scripts/525673/ao3%20warn%20for%20works%20with%20keywords.user.js
+// @updateURL https://update.greasyfork.org/scripts/525673/ao3%20warn%20for%20works%20with%20keywords.meta.js
 // ==/UserScript==
+
+/*jshint esversion: 8 */
 
 // interface
 
