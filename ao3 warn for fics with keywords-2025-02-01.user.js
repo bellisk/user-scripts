@@ -7,13 +7,11 @@
 // @license      MIT
 // @include      https://archiveofourown.org/*
 // @icon         http://archiveofourown.org/favicon.ico
-// @grant        GM_setValue
-// @grant        GM_getValue
-// @grant        GM_listValues
-// @grant        GM_deleteValue
-// @grant        GM_addStyle
-// @downloadURL https://update.greasyfork.org/scripts/525673/ao3%20warn%20for%20works%20with%20keywords.user.js
-// @updateURL https://update.greasyfork.org/scripts/525673/ao3%20warn%20for%20works%20with%20keywords.meta.js
+// @grant        GM.setValue
+// @grant        GM.getValue
+// @grant        GM.listValues
+// @grant        GM.deleteValue
+// @require      https://greasemonkey.github.io/gm4-polyfill/gm4-polyfill.js
 // ==/UserScript==
 
 /*jshint esversion: 8 */
@@ -37,26 +35,26 @@ primaryNav.appendChild(dropdown);
 
 function addKeyword() {
     const keyword = prompt("Enter a keyword to hide works that contain it");
-    GM_setValue(keyword, keyword);
-    GM_setValue('last', keyword);
+    GM.setValue(keyword, keyword);
+    GM.setValue('last', keyword);
     location.reload();
 }
 
 async function clearAll(){
-    const keys = await GM_listValues();
+    const keys = await GM.listValues();
     for (let k=0;k<keys.length; k++) {
-        await GM_deleteValue(keys[k]);
+        await GM.deleteValue(keys[k]);
     }
     location.reload();
 }
 
 async function clearLast() {
-    const keyword = await GM_getValue('last');
-    await GM_deleteValue('last');
-    await GM_deleteValue(keyword);
-    const keywordsToHide = await GM_listValues();
+    const keyword = await GM.getValue('last');
+    await GM.deleteValue('last');
+    await GM.deleteValue(keyword);
+    const keywordsToHide = await GM.listValues();
     if (keywordsToHide.length > 0) {
-        GM_setValue('last', keywordsToHide[keywordsToHide.length -1]);
+        GM.setValue('last', keywordsToHide[keywordsToHide.length -1]);
     }
     location.reload();
 }
@@ -98,15 +96,16 @@ async function filterListOfWorks() {
     if (works.length === 0) {
         return;
     }
-    const keywordsToHide = await GM_listValues();
+    const keywordsToHide = await GM.listValues();
     for (let j=0; j<works.length; j++) {
         const foundKeywords = [];
         for (let k=0; k<keywordsToHide.length; k++) {
             if (keywordsToHide[k] === 'last') {
                 continue;
             }
-            if (works[j].innerText.toLowerCase().includes(GM_getValue(keywordsToHide[k]))) {
-                foundKeywords.push(GM_getValue(keywordsToHide[k]));
+            const value = await GM.getValue(keywordsToHide[k]);
+            if (works[j].innerText.toLowerCase().includes(value.toLowerCase())) {
+                foundKeywords.push(value);
             }
         }
         if (foundKeywords.length > 0) {
@@ -160,15 +159,16 @@ async function addWarningBoxForSingleWorkPage() {
         return;
     }
     const summary = document.getElementsByClassName('summary')[0];
-    const keywordsToHide = await GM_listValues();
+    const keywordsToHide = await GM.listValues();
     const foundKeywords = [];
     for (let j=0; j<keywordsToHide.length; j++) {
         if (keywordsToHide[j] === 'last') {
             continue;
         }
-        if (chapters.innerText.toLowerCase().includes(GM_getValue(keywordsToHide[j])) ||
-           summary.innerText.toLowerCase().includes(GM_getValue(keywordsToHide[j]))) {
-            foundKeywords.push(GM_getValue(keywordsToHide[j]));
+        const value = await GM.getValue(keywordsToHide[j]);
+        if (chapters.innerText.toLowerCase().includes(value.toLowerCase()) ||
+           summary.innerText.toLowerCase().includes(value.toLowerCase())) {
+            foundKeywords.push(value);
         }
     }
     if (foundKeywords.length > 0) {
