@@ -45,9 +45,9 @@ function addKeyword() {
     location.reload();
 }
 
-async function clearAll(){
+async function clearAll() {
     const keys = await GM.listValues();
-    for (let k=0;k<keys.length; k++) {
+    for (let k = 0; k < keys.length; k++) {
         await GM.deleteValue(keys[k]);
     }
     location.reload();
@@ -59,7 +59,7 @@ async function clearLast() {
     await GM.deleteValue(keyword);
     const keywordsToHide = await GM.listValues();
     if (keywordsToHide.length > 0) {
-        GM.setValue('last', keywordsToHide[keywordsToHide.length -1]);
+        GM.setValue('last', keywordsToHide[keywordsToHide.length - 1]);
     }
     location.reload();
 }
@@ -82,12 +82,12 @@ function toggleWorkBlurbDisplay(index) {
     const blurbs = document.querySelectorAll('li.blurb');
     const warningButton = document.getElementById(`warningButton${index}`);
     if (blurbs[index].getElementsByClassName('header')[0].style.display === 'none') {
-        for (let k=0; k<blurbs[index].children.length; k++) {
+        for (let k = 0; k < blurbs[index].children.length; k++) {
             blurbs[index].children[k].style.display = 'block';
         }
         warningButton.textContent = 'Hide the work summary';
     } else {
-        for (let k=0; k<blurbs[index].children.length; k++) {
+        for (let k = 0; k < blurbs[index].children.length; k++) {
             if (blurbs[index].children[k].className !== 'warningBox') {
                 blurbs[index].children[k].style.display = 'none';
             }
@@ -102,9 +102,9 @@ async function filterListOfWorks() {
         return;
     }
     const keywordsToHide = await GM.listValues();
-    for (let j=0; j<works.length; j++) {
+    for (let j = 0; j < works.length; j++) {
         const foundKeywords = [];
-        for (let k=0; k<keywordsToHide.length; k++) {
+        for (let k = 0; k < keywordsToHide.length; k++) {
             if (keywordsToHide[k] === 'last') {
                 continue;
             }
@@ -126,11 +126,13 @@ async function filterListOfWorks() {
                 <button id="warningButton${j}">Display the work summary</button>
             `;
             GM_addStyle(warningBoxCss);
-            for (let k=0; k<works[j].children.length; k++) {
+            for (let k = 0; k < works[j].children.length; k++) {
                 works[j].children[k].style.display = 'none';
             }
             works[j].prepend(warning);
-            document.getElementById(`warningButton${j}`).onclick = function() {toggleWorkBlurbDisplay(j);};
+            document.getElementById(`warningButton${j}`).onclick = function () {
+                toggleWorkBlurbDisplay(j);
+            };
         }
     }
 }
@@ -143,7 +145,7 @@ function toggleWorkDisplay() {
         chapters.style.display = 'block';
         summary.style.display = 'block';
         const notes = document.getElementsByClassName('notes');
-        for (let k=0; k<notes.length; k++) {
+        for (let k = 0; k < notes.length; k++) {
             notes[k].style.display = 'block';
         }
         warningButton.textContent = 'Hide the work';
@@ -151,7 +153,7 @@ function toggleWorkDisplay() {
         chapters.style.display = 'none';
         summary.style.display = 'none';
         const notes = document.getElementsByClassName('notes');
-        for (let k=0; k<notes.length; k++) {
+        for (let k = 0; k < notes.length; k++) {
             notes[k].style.display = 'none';
         }
         warningButton.textContent = 'Display the work';
@@ -166,13 +168,13 @@ async function addWarningBoxForSingleWorkPage() {
     const summary = document.getElementsByClassName('summary')[0];
     const keywordsToHide = await GM.listValues();
     const foundKeywords = [];
-    for (let j=0; j<keywordsToHide.length; j++) {
+    for (let j = 0; j < keywordsToHide.length; j++) {
         if (keywordsToHide[j] === 'last') {
             continue;
         }
         const value = await GM.getValue(keywordsToHide[j]);
         if (chapters.innerText.toLowerCase().includes(value.toLowerCase()) ||
-           summary.innerText.toLowerCase().includes(value.toLowerCase())) {
+            summary.innerText.toLowerCase().includes(value.toLowerCase())) {
             foundKeywords.push(value);
         }
     }
@@ -195,18 +197,26 @@ async function addWarningBoxForSingleWorkPage() {
         chapters.style.display = 'none';
         summary.style.display = 'none';
         const notes = document.getElementsByClassName('notes');
-        for (let k=0; k<notes.length; k++) {
+        for (let k = 0; k < notes.length; k++) {
             notes[k].style.display = 'none';
         }
-        document.getElementById('warningButton').onclick = function() {toggleWorkDisplay();};
+        document.getElementById('warningButton').onclick = function () {
+            toggleWorkDisplay();
+        };
     }
 }
 
 // run
 
 addMenu();
-document.getElementById('clearLast').onclick = function() {clearLast();};
-document.getElementById('clearAll').onclick = function() {clearAll();};
-document.getElementById('addKeyword').onclick = function() {addKeyword();};
+document.getElementById('clearLast').onclick = function () {
+    clearLast();
+};
+document.getElementById('clearAll').onclick = function () {
+    clearAll();
+};
+document.getElementById('addKeyword').onclick = function () {
+    addKeyword();
+};
 filterListOfWorks();
 addWarningBoxForSingleWorkPage();
