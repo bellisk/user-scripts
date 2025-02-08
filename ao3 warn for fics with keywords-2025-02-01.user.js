@@ -18,8 +18,12 @@
 
 // interface
 
-const dropdown = document.createElement('li');
-dropdown.innerHTML = `
+function addMenu() {
+    if (document.getElementsByClassName("hideKeywordWorks").length > 0) {
+        return;
+    }
+    const dropdown = document.createElement('li');
+    dropdown.innerHTML = `
     <a class="dropdown-toggle" href="/menu/hide-keywords" data-toggle="dropdown" data-target="#">Hide works with keywords</a>
     <ul class="menu dropdown-menu" role="menu">
         <li id="clearLast" role="menu-item"><a href="#">Remove last-added keyword</a></li>
@@ -27,9 +31,10 @@ dropdown.innerHTML = `
         <li id="addKeyword" role="menu-item"><a href="#">Add keyword to hide works for</a></li>
     </ul>
 `;
-dropdown.className = 'dropdown hideKeywordWorks';
-const primaryNav = document.getElementsByClassName('primary navigation actions')[0];
-primaryNav.appendChild(dropdown);
+    dropdown.className = 'dropdown hideKeywordWorks';
+    const primaryNav = document.getElementsByClassName('primary navigation actions')[0];
+    primaryNav.appendChild(dropdown);
+}
 
 // manage keywords to hide
 
@@ -199,6 +204,7 @@ async function addWarningBoxForSingleWorkPage() {
 
 // run
 
+addMenu();
 document.getElementById('clearLast').onclick = function() {clearLast();};
 document.getElementById('clearAll').onclick = function() {clearAll();};
 document.getElementById('addKeyword').onclick = function() {addKeyword();};
