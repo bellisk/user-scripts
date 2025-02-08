@@ -103,13 +103,15 @@ async function filterListOfWorks() {
     }
     const keywordsToHide = await GM.listValues();
     for (let j = 0; j < works.length; j++) {
+        const workText = works[j].innerText.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
         const foundKeywords = [];
         for (let k = 0; k < keywordsToHide.length; k++) {
             if (keywordsToHide[k] === 'last') {
                 continue;
             }
             const value = await GM.getValue(keywordsToHide[k]);
-            if (works[j].innerText.toLowerCase().includes(value.toLowerCase())) {
+            const valueText = value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+            if (workText.includes(valueText)) {
                 foundKeywords.push(value);
             }
         }
@@ -165,7 +167,9 @@ async function addWarningBoxForSingleWorkPage() {
     if (chapters === null) {
         return;
     }
+    const chapterText = chapters.innerText.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
     const summary = document.getElementsByClassName('summary')[0];
+    const summaryText = summary.innerText.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")
     const keywordsToHide = await GM.listValues();
     const foundKeywords = [];
     for (let j = 0; j < keywordsToHide.length; j++) {
@@ -173,8 +177,9 @@ async function addWarningBoxForSingleWorkPage() {
             continue;
         }
         const value = await GM.getValue(keywordsToHide[j]);
-        if (chapters.innerText.toLowerCase().includes(value.toLowerCase()) ||
-            summary.innerText.toLowerCase().includes(value.toLowerCase())) {
+        const valueText = value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        if (chapterText.includes(valueText) ||
+            summaryText.includes(valueText)) {
             foundKeywords.push(value);
         }
     }
