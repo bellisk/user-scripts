@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ao3 warn for works with keywords
 // @namespace    http://tampermonkey.net/
-// @version      2025-02-04
+// @version      2025-02-08
 // @description  Adds a warning box on works that contain certain keywords on AO3
 // @author       bellisk
 // @license      MIT
